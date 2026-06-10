@@ -9,50 +9,65 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@1,600;1,700&display=swap');
 
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.8);
+        }
+
         body {
             font-family: 'Nunito', sans-serif;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
+            touch-action: pan-y;
         }
 
         .font-cursive { font-family: 'Playfair Display', serif; }
         .font-handwriting { font-family: 'Caveat', cursive; }
 
+        /* Smooth Glassmorphism */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(236, 72, 153, 0.15);
+        }
+
         /* Animations */
         @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(1) rotate(0deg); opacity: 0; }
+            0% { transform: translateY(100vh) scale(0.8) rotate(0deg); opacity: 0; }
             20% { opacity: var(--max-opacity, 0.8); }
             80% { opacity: var(--max-opacity, 0.8); }
             100% { transform: translateY(-10vh) scale(1.5) rotate(45deg); opacity: 0; }
         }
 
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+            0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg) scale(1.2); opacity: 0; }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            from { opacity: 0; transform: scale(0.95) translateY(15px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 30px rgba(236, 72, 153, 0.5); transform: scale(1); }
-            50% { box-shadow: 0 0 60px rgba(236, 72, 153, 0.9); transform: scale(1.05); }
+            0%, 100% { box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 50px rgba(236, 72, 153, 0.8); transform: scale(1.03); }
         }
         
         @keyframes syncPulse {
             0% { transform: scale(1); box-shadow: 0 0 10px currentColor; }
-            50% { transform: scale(0.95); box-shadow: 0 0 40px currentColor; }
+            50% { transform: scale(0.92); box-shadow: 0 0 40px currentColor; }
             100% { transform: scale(1); box-shadow: 0 0 10px currentColor; }
         }
 
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
-            15% { transform: scale(1.3); }
+            15% { transform: scale(1.25); }
             30% { transform: scale(1); }
-            45% { transform: scale(1.3); }
+            45% { transform: scale(1.25); }
             60% { transform: scale(1); }
         }
 
@@ -61,25 +76,24 @@
             to { transform: rotate(0deg); }
         }
 
-        .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .animate-heartbeat { animation: heartbeat 1.5s infinite; }
         .scanning { animation: pulseGlow 1.5s infinite; }
-        .btn-sync { transition: all 0.1s; }
-        .btn-sync.active { animation: syncPulse 0.2s infinite; opacity: 0.8; }
         
-        .step-container { display: none; width: 100%; max-w: 28rem; position: relative; z-index: 10; }
+        /* Game Buttons */
+        .btn-sync { transition: all 0.1s ease-out; touch-action: none; }
+        .btn-sync.active { animation: syncPulse 0.2s infinite; opacity: 0.8; filter: brightness(1.2); }
+        
+        .step-container { display: none; width: 100%; max-w: 28rem; position: relative; z-index: 10; margin: 0 auto; }
         .step-container.active { display: block; }
 
         .glossy-btn {
-            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%), linear-gradient(to bottom right, #f472b6, #c084fc);
-            border: 2px solid rgba(255,255,255,0.6);
+            background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%), linear-gradient(to bottom right, #f472b6, #c084fc);
+            border: 2px solid rgba(255,255,255,0.8);
             backdrop-filter: blur(10px);
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
+        /* Video PIP */
         #camera-pip {
             position: fixed; bottom: 20px; right: 20px; width: 90px; height: 120px;
             border-radius: 12px; object-fit: cover; border: 3px solid rgba(255, 255, 255, 0.9);
@@ -93,17 +107,17 @@
         #mega-celebration { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             pointer-events: none; z-index: 999; overflow: hidden; display: none;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(253,230,138,0.4) 100%);
-            backdrop-filter: blur(5px);
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(253,230,138,0.7) 100%);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
 
         .clock-effect {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 300px; height: 300px; opacity: 0.2;
+            width: 320px; height: 320px; opacity: 0.15;
         }
         .clock-hand {
             transform-origin: bottom center;
-            animation: spinBackwards 2s linear infinite;
+            animation: spinBackwards 1.5s linear infinite;
         }
 
         /* Memorable Notebook Styles */
@@ -114,38 +128,39 @@
                 linear-gradient(#60a5fa 1px, transparent 1px);
             background-size: 100% 30px;
             line-height: 30px;
-            padding-left: 60px;
+            padding-left: 55px;
             padding-top: 30px;
             border-radius: 8px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05), 5px 5px 15px rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05), 5px 10px 20px rgba(0,0,0,0.15);
             position: relative;
         }
         .notebook-binder-holes {
-            position: absolute; left: 15px; top: 0; height: 100%; width: 15px;
+            position: absolute; left: 12px; top: 0; height: 100%; width: 15px;
             display: flex; flex-direction: column; justify-content: space-evenly;
         }
-        .hole { width: 12px; height: 12px; background: #e2e8f0; border-radius: 50%; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2); }
+        .hole { width: 14px; height: 14px; background: #cbd5e1; border-radius: 50%; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4); }
 
         .polaroid {
-            background: white; padding: 6px 6px 20px 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            background: white; padding: 6px 6px 20px 6px; box-shadow: 0 6px 15px rgba(0,0,0,0.15);
             border-radius: 2px; transform: rotate(calc(var(--rot) * 1deg));
-            position: relative;
+            position: relative; transition: transform 0.3s;
         }
+        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 20; }
+        
         .tape {
-            position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(calc(var(--trot) * 1deg));
-            width: 40px; height: 15px; background: rgba(255, 255, 255, 0.4);
-            border-left: 1px dashed rgba(0,0,0,0.1); border-right: 1px dashed rgba(0,0,0,0.1);
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(calc(var(--trot) * 1deg));
+            width: 45px; height: 18px; background: rgba(255, 255, 255, 0.5);
+            border-left: 1px dashed rgba(0,0,0,0.2); border-right: 1px dashed rgba(0,0,0,0.2);
             box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 5;
         }
 
-        .progress-bar-fill { transition: width 0.1s ease-out; }
+        .progress-bar-fill { transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-sky-200 via-pink-200 to-purple-200 flex flex-col items-center justify-center p-4 text-slate-800 transition-colors duration-1000 relative">
 
     <!-- Background Music -->
     <audio id="bgm" loop preload="auto">
-        <!-- Using a public domain romantic track -->
         <source src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Debussy_-_Clair_de_lune.ogg" type="audio/ogg">
     </audio>
 
@@ -156,60 +171,63 @@
         <svg class="clock-effect" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="48" fill="none" stroke="#ec4899" stroke-width="2" />
             <line class="clock-hand" x1="50" y1="50" x2="50" y2="15" stroke="#ec4899" stroke-width="3" stroke-linecap="round" />
-            <line class="clock-hand" x1="50" y1="50" x2="50" y2="25" stroke="#ec4899" stroke-width="4" stroke-linecap="round" style="animation-duration: 12s;" />
+            <line class="clock-hand" x1="50" y1="50" x2="50" y2="25" stroke="#ec4899" stroke-width="4" stroke-linecap="round" style="animation-duration: 8s;" />
         </svg>
         <div id="mega-particles"></div>
-        <h1 class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-black text-pink-600 drop-shadow-lg text-center w-full z-50 animate-heartbeat">
-            Rewinding Time...<br>Restarting Your Journey!
-        </h1>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-full z-50">
+            <h1 class="text-4xl md:text-5xl font-black text-pink-600 drop-shadow-lg mb-2 font-cursive animate-heartbeat">
+                Rewinding Time...
+            </h1>
+            <h2 class="text-2xl font-bold text-purple-700 drop-shadow-md">Restarting Your Journey!</h2>
+        </div>
     </div>
 
-    <video id="camera-pip" autoplay muted playsinline></video>
-
-    <!-- Hidden Elements for Video Compositing -->
-    <video id="hidden-screen-video" autoplay muted playsinline style="display:none;"></video>
+    <video id="camera-pip" autoplay muted playsinline webkit-playsinline></video>
+    <video id="hidden-screen-video" autoplay muted playsinline webkit-playsinline style="display:none;"></video>
     <canvas id="compositor-canvas" style="display:none;"></canvas>
 
     <!-- STEP -1: Welcome Screen -->
-    <div id="step-welcome" class="step-container active animate-fade-in text-center h-[85vh] flex flex-col justify-center items-center">
-        <h1 class="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-500 mb-6 drop-shadow-sm font-cursive">
+    <div id="step-welcome" class="step-container active animate-fade-in text-center flex flex-col justify-center items-center py-10">
+        <h1 class="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-500 mb-4 drop-shadow-sm font-cursive leading-tight">
             Restart Together
         </h1>
-        <p class="text-gray-600 font-medium mb-10 text-lg px-4">Leave the past behind. Begin a new chapter.</p>
+        <p class="text-gray-600 font-medium mb-8 text-lg px-4">Leave the past behind. Begin a new chapter.</p>
         
-        <button id="start-btn" onclick="startJourneyAndRecording()" class="w-56 h-56 rounded-full glossy-btn text-white font-black text-2xl shadow-[0_0_50px_rgba(236,72,153,0.7)] flex flex-col items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 relative" style="animation: pulseGlow 3s infinite;">
-            <svg id="start-icon" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 text-white animate-heartbeat"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-            <span id="start-text" class="mt-2 text-center leading-tight">START<br>JOURNEY</span>
+        <button id="start-btn" onclick="startJourneyAndRecording()" class="w-48 h-48 md:w-56 md:h-56 rounded-full glossy-btn text-white font-black text-xl md:text-2xl shadow-[0_0_40px_rgba(236,72,153,0.6)] flex flex-col items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 relative" style="animation: pulseGlow 3s infinite;">
+            <svg id="start-icon" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 md:w-12 md:h-12 text-white animate-heartbeat"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <span id="start-text" class="mt-1 text-center leading-tight">START<br>JOURNEY</span>
             <svg id="loading-spinner" class="hidden animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
         </button>
         
-        <div class="mt-10 bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm max-w-sm">
-            <p class="text-sm font-bold text-pink-600 mb-1 flex items-center justify-center gap-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+        <div class="mt-8 glass-card p-4 rounded-xl max-w-sm mx-auto">
+            <p class="text-sm font-bold text-pink-600 mb-2 flex items-center justify-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
                 Memory Recording Feature
             </p>
-            <p class="text-xs text-gray-600 font-medium">Please allow <strong class="text-purple-600">Camera</strong> and <strong class="text-purple-600">Screen Sharing</strong>. Turn up your volume for music! ❤️</p>
+            <p class="text-[13px] text-gray-700 font-medium leading-relaxed">
+                Please allow <strong class="text-purple-600">Camera Permissions</strong>. Turn up your volume for music! Your journey will be recorded as a beautiful final memory. ❤️
+            </p>
         </div>
     </div>
 
     <!-- STEP 0: Fingerprint Verification -->
     <div id="step-fingerprint" class="step-container">
-        <div class="bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_0_30px_rgba(255,192,203,0.4)] rounded-3xl p-8 text-center animate-fade-in">
-            <h2 class="text-2xl font-bold text-purple-700 mb-2">Connect Your Hearts</h2>
-            <p class="text-gray-500 mb-8 text-sm">Place both fingers to scan and unite.</p>
+        <div class="glass-card rounded-3xl p-8 text-center animate-fade-in">
+            <h2 class="text-3xl font-bold text-purple-700 mb-2 font-cursive">Connect Hearts</h2>
+            <p class="text-gray-600 mb-8 text-sm">Place both fingers to scan and unite.</p>
             
-            <div class="flex justify-center gap-6 mb-8">
+            <div class="flex justify-center gap-4 sm:gap-6 mb-8">
                 <div class="flex flex-col items-center">
-                    <button id="btn-jeyaram" class="w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg bg-white/80 text-sky-300 touch-none">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/><path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/><path d="M8.21 13.89c-.1-.3-.15-.62-.15-.96 0-2.16 1.76-3.93 3.94-3.93s3.94 1.76 3.94 3.93c0 .34-.05.66-.15.96"/><path d="M12 16v-2"/><path d="M12 20v-1"/></svg>
+                    <button id="btn-jeyaram" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg bg-white/90 text-sky-400 touch-none">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/><path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/><path d="M8.21 13.89c-.1-.3-.15-.62-.15-.96 0-2.16 1.76-3.93 3.94-3.93s3.94 1.76 3.94 3.93c0 .34-.05.66-.15.96"/><path d="M12 16v-2"/><path d="M12 20v-1"/></svg>
                     </button>
-                    <span id="label-jeyaram" class="mt-4 font-bold text-gray-400">Jeyaram</span>
+                    <span id="label-jeyaram" class="mt-3 font-bold text-gray-500">Jeyaram</span>
                 </div>
                 <div class="flex flex-col items-center">
-                    <button id="btn-ashrita" class="w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg bg-white/80 text-pink-300 touch-none">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/><path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/><path d="M8.21 13.89c-.1-.3-.15-.62-.15-.96 0-2.16 1.76-3.93 3.94-3.93s3.94 1.76 3.94 3.93c0 .34-.05.66-.15.96"/><path d="M12 16v-2"/><path d="M12 20v-1"/></svg>
+                    <button id="btn-ashrita" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg bg-white/90 text-pink-400 touch-none">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/><path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/><path d="M8.21 13.89c-.1-.3-.15-.62-.15-.96 0-2.16 1.76-3.93 3.94-3.93s3.94 1.76 3.94 3.93c0 .34-.05.66-.15.96"/><path d="M12 16v-2"/><path d="M12 20v-1"/></svg>
                     </button>
-                    <span id="label-ashrita" class="mt-4 font-bold text-gray-400">Ashrita</span>
+                    <span id="label-ashrita" class="mt-3 font-bold text-gray-500">Ashrita</span>
                 </div>
             </div>
             <div id="scan-status" class="h-28 flex items-center justify-center relative">
@@ -221,8 +239,8 @@
     <!-- STEP 0.5: Transition Trigger -->
     <div id="step-restart-trigger" class="step-container">
         <div class="flex flex-col items-center justify-center h-[70vh] animate-fade-in text-center">
-            <h2 class="text-2xl font-bold text-purple-700 mb-12 bg-white/50 px-6 py-2 rounded-full backdrop-blur-sm shadow-sm">Ready for the magic? ✨</h2>
-            <button onclick="triggerMegaCelebration()" class="w-64 h-64 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-sky-500 text-white font-black text-3xl shadow-[0_0_60px_rgba(236,72,153,0.8)] border-4 border-white flex flex-col items-center justify-center transition-transform hover:scale-105 active:scale-95" style="animation: pulseGlow 2s infinite;">
+            <h2 class="text-2xl font-bold text-purple-700 mb-10 glass-card px-6 py-2 rounded-full shadow-sm font-cursive">Ready for the magic? ✨</h2>
+            <button onclick="triggerMegaCelebration()" class="w-60 h-60 sm:w-64 sm:h-64 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-sky-500 text-white font-black text-3xl shadow-[0_0_60px_rgba(236,72,153,0.8)] border-4 border-white flex flex-col items-center justify-center transition-transform hover:scale-105 active:scale-95" style="animation: pulseGlow 2s infinite;">
                 RESTART NOW<br><span class="text-xl mt-2">YOUR JOURNEY</span>
             </button>
         </div>
@@ -231,47 +249,47 @@
     <!-- STEP 1: Countdown -->
     <div id="step-countdown" class="step-container">
         <div class="flex flex-col items-center justify-center h-[70vh]">
-            <div id="countdown-text" class="text-[180px] font-black text-white" style="text-shadow: 0 0 60px rgba(255,105,180,1)">3</div>
+            <div id="countdown-text" class="text-[150px] sm:text-[180px] font-black text-white" style="text-shadow: 0 0 60px rgba(255,105,180,1)">3</div>
         </div>
     </div>
 
     <!-- STEP 2: Sync Game -->
     <div id="step-syncgame" class="step-container">
-        <div class="bg-white/70 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-8 text-center animate-fade-in">
-            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-2">Sync Challenge</h2>
+        <div class="glass-card rounded-3xl p-6 sm:p-8 text-center animate-fade-in">
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-2 font-cursive">Sync Challenge</h2>
             <p class="text-gray-600 mb-6 text-sm">Tap your buttons at the EXACT same time as fast as you can. Reach 100!</p>
             
-            <div class="text-3xl font-black text-pink-500 mb-6 bg-white/80 inline-block px-8 py-3 rounded-full shadow-inner border border-pink-100 relative overflow-hidden">
+            <div class="text-2xl sm:text-3xl font-black text-pink-500 mb-6 bg-white/90 inline-block px-8 py-3 rounded-full shadow-inner border border-pink-100 relative overflow-hidden">
                 <div id="sync-progress-bg" class="absolute left-0 top-0 h-full bg-pink-100 -z-10 transition-all duration-100" style="width: 0%;"></div>
                 <span id="sync-score">0</span> / 100
             </div>
 
             <div class="flex justify-center gap-4 mb-6">
-                <button id="sync-j" class="btn-sync touch-none w-32 h-32 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white shadow-[0_0_20px_rgba(56,189,248,0.5)] flex flex-col items-center justify-center">
-                    <span class="font-bold text-lg text-white">❤️ Jeyaram</span>
+                <button id="sync-j" class="btn-sync touch-none w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white shadow-[0_0_20px_rgba(56,189,248,0.5)] flex flex-col items-center justify-center">
+                    <span class="font-bold text-base sm:text-lg text-white">❤️ Jeyaram</span>
                 </button>
-                <button id="sync-h" class="btn-sync touch-none w-32 h-32 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 text-white shadow-[0_0_20px_rgba(232,121,249,0.5)] flex flex-col items-center justify-center">
-                    <span class="font-bold text-lg text-white">❤️ Ashrita</span>
+                <button id="sync-h" class="btn-sync touch-none w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 text-white shadow-[0_0_20px_rgba(232,121,249,0.5)] flex flex-col items-center justify-center">
+                    <span class="font-bold text-base sm:text-lg text-white">❤️ Ashrita</span>
                 </button>
             </div>
-            <p class="text-xs text-gray-500 italic font-bold" id="sync-msg">Spam tap together!</p>
+            <p class="text-sm text-gray-500 italic font-bold bg-white/50 inline-block px-4 py-1 rounded-full" id="sync-msg">Spam tap together!</p>
         </div>
     </div>
 
     <!-- STEP 2.5: Love Meter Game -->
     <div id="step-game2" class="step-container">
-        <div class="bg-white/70 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-8 text-center animate-fade-in">
-            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500 mb-2">Love Meter</h2>
+        <div class="glass-card rounded-3xl p-6 sm:p-8 text-center animate-fade-in">
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500 mb-2 font-cursive">Love Meter</h2>
             <p class="text-gray-600 mb-6 text-sm">Tap the giant heart rapidly together to fill the meter!</p>
             
             <div class="w-full bg-gray-200 rounded-full h-6 mb-8 shadow-inner border border-gray-300 relative overflow-hidden">
                 <div id="love-meter-fill" class="progress-bar-fill bg-gradient-to-r from-pink-400 to-red-500 h-6 rounded-full" style="width: 0%"></div>
             </div>
 
-            <button id="heart-btn" class="w-48 h-48 mx-auto flex items-center justify-center touch-none transition-transform active:scale-90" onclick="chargeLoveMeter()">
-                <svg viewBox="0 0 24 24" class="w-full h-full text-red-500 fill-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <button id="heart-btn" class="w-40 h-40 sm:w-48 sm:h-48 mx-auto flex items-center justify-center touch-none transition-transform active:scale-90" onclick="chargeLoveMeter()">
+                <svg viewBox="0 0 24 24" class="w-full h-full text-red-500 fill-red-500 drop-shadow-[0_0_30px_rgba(239,68,68,0.7)]"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
             </button>
-            <p class="text-xs text-pink-600 font-bold mt-6 italic" id="game2-msg">Tap tap tap! 0%</p>
+            <p class="text-sm text-pink-600 font-bold mt-6 italic bg-white/50 inline-block px-4 py-1 rounded-full" id="game2-msg">Tap tap tap! 0%</p>
         </div>
     </div>
 
@@ -287,15 +305,15 @@
 
     <!-- STEP 4: Final Celebration -->
     <div id="step-celebration" class="step-container">
-        <div class="bg-white/90 backdrop-blur-xl border-4 border-pink-200 shadow-2xl rounded-[2rem] p-8 text-center relative overflow-hidden animate-fade-in">
+        <div class="glass-card border-2 border-pink-300 shadow-2xl rounded-[2rem] p-8 text-center relative overflow-hidden animate-fade-in">
             <div class="text-6xl mb-4" style="animation: bounce 2s infinite">🎇❤️🎆</div>
             <p class="text-sm font-bold text-pink-500 tracking-widest uppercase mb-2">Memory Completed</p>
-            <h2 class="text-3xl font-black text-gray-800 mb-6 drop-shadow-sm">
+            <h2 class="text-3xl font-black text-gray-800 mb-6 drop-shadow-sm font-cursive">
                 ❤️ Restart Journey Completed ❤️
             </h2>
             <div class="bg-gradient-to-br from-pink-50 to-purple-50 p-6 rounded-2xl mb-8 border border-pink-100 shadow-inner">
-                <p class="text-lg font-bold text-purple-800 mb-4">"You chose each other again. Your new chapter starts today."</p>
-                <div class="flex justify-center gap-2 text-2xl font-bold font-cursive">Jeyaram 💍 Ashrita</div>
+                <p class="text-lg font-bold text-purple-800 mb-4 font-handwriting text-2xl leading-tight">"You chose each other again. Your new chapter starts today."</p>
+                <div class="flex justify-center gap-2 text-2xl font-bold font-cursive text-pink-600">Jeyaram 💍 Ashrita</div>
             </div>
             <button onclick="playClickSFX(); goToStep('summary')" class="w-full py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-lg shadow-[0_0_20px_rgba(236,72,153,0.6)] hover:scale-105 transition-transform">
                 Open Memorable Notebook
@@ -308,60 +326,60 @@
         <div class="w-full animate-fade-in pb-20 pt-4">
             
             <!-- Memorable Notebook Design -->
-            <div class="notebook-paper shadow-2xl mb-8">
+            <div class="notebook-paper mb-8">
                 <div class="notebook-binder-holes">
                     <div class="hole"></div><div class="hole"></div><div class="hole"></div>
                     <div class="hole"></div><div class="hole"></div><div class="hole"></div>
                 </div>
                 
-                <div class="pr-6 pb-8">
-                    <h2 class="text-4xl font-extrabold text-gray-800 mb-1 font-handwriting text-center mt-2">Our Restart Journey</h2>
-                    <p id="memory-date" class="text-lg text-gray-600 font-handwriting text-center mb-6"></p>
+                <div class="pr-4 sm:pr-6 pb-8">
+                    <h2 class="text-4xl font-extrabold text-gray-800 mb-1 font-handwriting text-center mt-2 tracking-wide">Our Restart Journey</h2>
+                    <p id="memory-date" class="text-xl text-gray-500 font-handwriting text-center mb-6"></p>
 
                     <h3 class="text-2xl font-handwriting text-red-500 font-bold mt-4 -ml-2">Captured Video Memory</h3>
-                    <div id="video-container" class="my-4 rounded-xl overflow-hidden shadow-lg border-2 border-white bg-black relative transform rotate-1">
+                    <div id="video-container" class="my-4 rounded-xl overflow-hidden shadow-lg border-2 border-white bg-black relative transform rotate-1 hidden">
                         <div class="absolute top-2 left-2 z-10 bg-black/60 backdrop-blur px-3 py-1 rounded-full flex items-center gap-2">
                             <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                            <span class="text-white text-xs font-bold">Screen & Camera Record</span>
+                            <span class="text-white text-xs font-bold">Recorded Memory</span>
                         </div>
-                        <video id="final-video" class="w-full h-auto object-cover max-h-[400px]" controls playsinline preload="auto"></video>
+                        <video id="final-video" class="w-full h-auto object-cover max-h-[400px]" controls playsinline webkit-playsinline preload="auto"></video>
                     </div>
 
                     <h3 class="text-2xl font-handwriting text-red-500 font-bold mt-8 -ml-2">Our Captured Moments</h3>
-                    <div id="photo-gallery" class="grid grid-cols-2 gap-6 my-6 pl-2"></div>
+                    <div id="photo-gallery" class="grid grid-cols-2 gap-4 sm:gap-6 my-6 pl-1 sm:pl-2"></div>
 
                     <h3 class="text-2xl font-handwriting text-red-500 font-bold mt-8 -ml-2">Our Promise</h3>
-                    <p id="memory-promise" class="text-2xl text-blue-800 font-handwriting pl-4 leading-8"></p>
+                    <p id="memory-promise" class="text-2xl text-blue-800 font-handwriting pl-2 sm:pl-4 leading-8"></p>
 
                     <h3 class="text-2xl font-handwriting text-red-500 font-bold mt-8 -ml-2">Things To Remember About Us</h3>
-                    <ul id="memory-list-final" class="list-disc pl-8 text-2xl text-blue-800 font-handwriting leading-8 mb-4"></ul>
+                    <ul id="memory-list-final" class="list-disc pl-6 sm:pl-8 text-2xl text-blue-800 font-handwriting leading-8 mb-4"></ul>
                 </div>
             </div>
 
             <!-- Formal Certificate Section -->
-            <div class="bg-gradient-to-b from-yellow-50 to-white rounded-2xl p-8 shadow-2xl border border-yellow-300 relative overflow-hidden text-center">
-                <div class="absolute inset-3 border-4 border-double border-yellow-300 rounded-xl pointer-events-none opacity-50"></div>
+            <div class="bg-gradient-to-b from-yellow-50 to-white rounded-2xl p-6 sm:p-8 shadow-2xl border border-yellow-300 relative overflow-hidden text-center">
+                <div class="absolute inset-2 sm:inset-3 border-4 border-double border-yellow-300 rounded-xl pointer-events-none opacity-50"></div>
                 <svg class="w-16 h-16 mx-auto text-yellow-500 mb-4 fill-yellow-100" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
                 
-                <h2 class="text-2xl font-black text-gray-800 tracking-widest uppercase mb-2">Certificate of Restart</h2>
-                <h3 class="text-4xl font-cursive italic text-pink-500 mb-6 font-bold">Congratulations!</h3>
-                <p class="text-gray-600 text-sm mb-4">This certificate is proudly presented to</p>
-                <div class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-purple-500 to-pink-500 font-cursive italic mb-4 py-2 border-b-2 border-pink-200 inline-block px-8">
+                <h2 class="text-xl sm:text-2xl font-black text-gray-800 tracking-widest uppercase mb-2">Certificate of Restart</h2>
+                <h3 class="text-3xl sm:text-4xl font-cursive italic text-pink-500 mb-6 font-bold">Congratulations!</h3>
+                <p class="text-gray-600 text-xs sm:text-sm mb-4">This certificate is proudly presented to</p>
+                <div class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-purple-500 to-pink-500 font-cursive italic mb-4 py-2 border-b-2 border-pink-200 inline-block px-4 sm:px-8">
                     Jeyaram & Ashrita
                 </div>
-                <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+                <p class="text-gray-600 text-xs sm:text-sm mb-6 leading-relaxed px-2">
                     For successfully completing the Restart Journey together. May your love grow stronger, your trust run deeper, and your future be filled with endless happiness.
                 </p>
-                <div class="flex justify-between items-center mt-8 px-4">
-                    <div class="text-center">
-                        <div class="border-b border-gray-400 w-24 mb-1"></div>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-wider">Date</p>
+                <div class="flex justify-between items-center mt-6 sm:mt-8 px-2 sm:px-4">
+                    <div class="text-center w-1/3">
+                        <div class="border-b border-gray-400 w-full mb-1"></div>
+                        <p class="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-wider">Date</p>
                         <p id="cert-date" class="text-xs font-bold text-gray-600"></p>
                     </div>
-                    <div><svg class="w-12 h-12 text-pink-400 opacity-50" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
-                    <div class="text-center">
-                        <div class="border-b border-gray-400 w-24 mb-1 text-pink-500 font-cursive italic text-lg leading-3">Forever</div>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-wider">Validity</p>
+                    <div class="w-1/3 flex justify-center"><svg class="w-10 h-10 sm:w-12 sm:h-12 text-pink-400 opacity-50" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                    <div class="text-center w-1/3">
+                        <div class="border-b border-gray-400 w-full mb-1 text-pink-500 font-cursive italic text-base sm:text-lg leading-3">Forever</div>
+                        <p class="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-wider">Validity</p>
                     </div>
                 </div>
             </div>
@@ -385,7 +403,7 @@
         function initAudio() {
             if(!actx) actx = new AudioContext();
             if(actx.state === 'suspended') actx.resume();
-            document.getElementById('bgm').play().catch(e=>console.log(e));
+            document.getElementById('bgm').play().catch(e=>console.log("Auto-play blocked, interaction needed"));
         }
         function playTone(freq, type, dur, vol) {
             if(!actx) return;
@@ -400,28 +418,28 @@
         function playClickSFX() { playTone(600, 'sine', 0.1, 0.1); }
         function playSyncSFX() { playTone(800, 'sine', 0.05, 0.05); }
         function playSuccessSFX() { playTone(400, 'sine', 0.1, 0.1); setTimeout(()=>playTone(600, 'sine', 0.2, 0.1), 100); }
-        function playShutterSFX() { playTone(100, 'square', 0.1, 0.2); } 
+        function playShutterSFX() { playTone(150, 'square', 0.1, 0.2); } 
         
-        // Clapping / Cheering Generator
+        // Clapping / Cheering Generator for 10 seconds
         function playClappingCheerSFX() {
             if(!actx) return;
-            for(let i=0; i<80; i++) {
+            for(let i=0; i<100; i++) {
                 setTimeout(() => {
-                    const dur = 0.05 + Math.random() * 0.05;
+                    const dur = 0.05 + Math.random() * 0.1;
                     const bufferSize = actx.sampleRate * dur;
                     const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
                     const data = buffer.getChannelData(0);
                     for(let j=0; j<bufferSize; j++) data[j] = Math.random() * 2 - 1;
                     const noise = actx.createBufferSource(); noise.buffer = buffer;
-                    const filter = actx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1000 + Math.random()*500;
-                    const gain = actx.createGain(); gain.gain.setValueAtTime(0.1, actx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + dur);
+                    const filter = actx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 800 + Math.random()*800;
+                    const gain = actx.createGain(); gain.gain.setValueAtTime(0.15, actx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + dur);
                     noise.connect(filter); filter.connect(gain); gain.connect(actx.destination);
                     noise.start();
-                }, Math.random() * 8000); // spread over 8 seconds
+                }, Math.random() * 9500); // spread over 9.5 seconds
             }
         }
 
-        // --- Media Recording ---
+        // --- Media Recording (Robust Mobile Fallback) ---
         let mediaRecorder; let recordedChunks = [];
         let camStream = null; let screenStream = null; let recordingLoop;
 
@@ -436,46 +454,65 @@
                 const camVideo = document.getElementById('camera-pip');
                 camVideo.srcObject = camStream; camVideo.play(); camVideo.style.display = 'block';
 
+                // Try Screen recording (Usually fails/denied on mobile phones)
                 try {
                     screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
                     const screenVideo = document.getElementById('hidden-screen-video');
                     screenVideo.srcObject = screenStream; screenVideo.play();
-                } catch (e) {}
-
-                const canvas = document.getElementById('compositor-canvas'); const ctx = canvas.getContext('2d');
-                canvas.width = 720; canvas.height = 1280; const screenVideo = document.getElementById('hidden-screen-video');
-                
-                function drawFrame() {
-                    if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
-                    ctx.fillStyle = '#fbcfe8'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    if (screenStream && screenVideo.readyState >= 2) {
-                        const sR = screenVideo.videoWidth / screenVideo.videoHeight; const cR = canvas.width / canvas.height;
-                        let dW = canvas.width; let dH = canvas.height;
-                        if (sR > cR) dW = canvas.height * sR; else dH = canvas.width / sR;
-                        ctx.drawImage(screenVideo, (canvas.width - dW)/2, (canvas.height - dH)/2, dW, dH);
-                    }
-                    if (camStream && camVideo.readyState >= 2) {
-                        const pW = canvas.width * 0.35; const pH = pW * (camVideo.videoHeight / camVideo.videoWidth || 1.33);
-                        const pX = canvas.width - pW - 40; const pY = canvas.height - pH - 40;
-                        ctx.save(); ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 10; ctx.strokeRect(pX, pY, pW, pH);
-                        ctx.translate(pX + pW, pY); ctx.scale(-1, 1); ctx.drawImage(camVideo, 0, 0, pW, pH); ctx.restore();
-                    }
-                    recordingLoop = requestAnimationFrame(drawFrame);
+                } catch (e) {
+                    console.warn("Screen sharing not available (normal on mobile). Capturing camera only.");
+                    screenStream = null;
                 }
 
-                const compositeStream = canvas.captureStream(30);
-                if (camStream.getAudioTracks().length > 0) compositeStream.addTrack(camStream.getAudioTracks()[0]);
-                if (screenStream && screenStream.getAudioTracks().length > 0) { try { compositeStream.addTrack(screenStream.getAudioTracks()[0]); } catch(e){} }
+                // If screen stream exists, use canvas compositor. Otherwise, record camera directly to save battery/perf.
+                let finalStreamToRecord;
+                
+                if (screenStream) {
+                    const canvas = document.getElementById('compositor-canvas'); const ctx = canvas.getContext('2d');
+                    canvas.width = 720; canvas.height = 1280; const screenVideo = document.getElementById('hidden-screen-video');
+                    
+                    function drawFrame() {
+                        if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+                        ctx.fillStyle = '#fbcfe8'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        if (screenStream && screenVideo.readyState >= 2) {
+                            const sR = screenVideo.videoWidth / screenVideo.videoHeight; const cR = canvas.width / canvas.height;
+                            let dW = canvas.width; let dH = canvas.height;
+                            if (sR > cR) dW = canvas.height * sR; else dH = canvas.width / sR;
+                            ctx.drawImage(screenVideo, (canvas.width - dW)/2, (canvas.height - dH)/2, dW, dH);
+                        }
+                        if (camStream && camVideo.readyState >= 2) {
+                            const pW = canvas.width * 0.35; const pH = pW * (camVideo.videoHeight / camVideo.videoWidth || 1.33);
+                            const pX = canvas.width - pW - 40; const pY = canvas.height - pH - 40;
+                            ctx.save(); ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 10; ctx.strokeRect(pX, pY, pW, pH);
+                            ctx.translate(pX + pW, pY); ctx.scale(-1, 1); ctx.drawImage(camVideo, 0, 0, pW, pH); ctx.restore();
+                        }
+                        recordingLoop = requestAnimationFrame(drawFrame);
+                    }
+                    
+                    finalStreamToRecord = canvas.captureStream(30);
+                    if (camStream.getAudioTracks().length > 0) finalStreamToRecord.addTrack(camStream.getAudioTracks()[0]);
+                    if (screenStream.getAudioTracks().length > 0) { try { finalStreamToRecord.addTrack(screenStream.getAudioTracks()[0]); } catch(e){} }
+                    requestAnimationFrame(drawFrame);
+                } else {
+                    // Mobile Fallback: Direct camera record
+                    finalStreamToRecord = camStream;
+                }
 
-                mediaRecorder = new MediaRecorder(compositeStream, { mimeType: 'video/webm' });
+                // Omit mimeType to let iOS choose mp4/safari-friendly format if webm fails
+                try {
+                    mediaRecorder = new MediaRecorder(finalStreamToRecord, { mimeType: 'video/webm' });
+                } catch(e) {
+                    mediaRecorder = new MediaRecorder(finalStreamToRecord); // Fallback to browser default
+                }
+                
                 mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
                 mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: "video/webm" });
+                    const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'video/mp4' });
                     document.getElementById('final-video').src = URL.createObjectURL(blob);
                 };
 
-                mediaRecorder.start(); requestAnimationFrame(drawFrame);
-            } catch (err) { alert("Camera needed to capture task photos. Continuing without recording."); }
+                mediaRecorder.start(); 
+            } catch (err) { alert("Camera access is needed to capture task photos. We will continue the journey without video recording."); }
 
             spinner.classList.add('hidden'); icon.classList.remove('hidden'); text.classList.remove('hidden'); btn.classList.add('hover:scale-105');
             state.startTime = Date.now(); goToStep('fingerprint');
@@ -493,22 +530,32 @@
             playShutterSFX();
             const video = document.getElementById('camera-pip');
             if (camStream && video.readyState >= 2) {
-                const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d'); ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const canvas = document.createElement('canvas'); 
+                
+                // Crop to a square for polaroids to prevent squishing
+                const size = Math.min(video.videoWidth, video.videoHeight);
+                canvas.width = size; canvas.height = size;
+                const ctx = canvas.getContext('2d'); 
+                ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
+                
+                // Center crop
+                const sx = (video.videoWidth - size) / 2;
+                const sy = (video.videoHeight - size) / 2;
+                ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
+                
                 state.taskPhotos[index] = canvas.toDataURL('image/jpeg', 0.8);
             }
         }
 
         // --- Tasks Definition ---
         const tasksData = [
-            { title: "1. Restart Your Phone", desc: "Clear temporary issues for a fresh beginning.", icon: '<path d="M5 18H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-2"/><path d="M11.5 22h1"/><path d="M8 2v2"/><path d="M16 2v2"/><rect width="14" height="14" x="5" y="8" rx="2"/>' },
-            { title: "2. Long Hug", desc: "Hug each other for at least 30 seconds without saying anything.", icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
-            { title: "3. Share Your Feelings", desc: "Share one appreciation and one goal to improve.", icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="M9.5 10.5 12 13l2.5-2.5"/>' },
-            { title: "4. Promise To Each Other", desc: "Write one promise to keep for your relationship.", icon: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>' },
-            { title: "5. Things To Remember", desc: "Enter favorite memories or future goals.", icon: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/>' },
-            { title: "6. Custom Memory", desc: "Make your personal category and snap a memory.", icon: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>' },
-            { title: "7. Best Love Category 💓😜", desc: "Celebrate your love together with a funny photo!", icon: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 18.5s3 2.5 7 2.5"/>' }
+            { title: "1. Restart Phone", desc: "Clear issues for a fresh beginning.", icon: '<path d="M5 18H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-2"/><path d="M11.5 22h1"/><path d="M8 2v2"/><path d="M16 2v2"/><rect width="14" height="14" x="5" y="8" rx="2"/>' },
+            { title: "2. Long Hug", desc: "Hug for 30s without talking.", icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
+            { title: "3. True Feelings", desc: "Share one appreciation and one goal.", icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="M9.5 10.5 12 13l2.5-2.5"/>' },
+            { title: "4. Our Promise", desc: "Write one promise for your future.", icon: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>' },
+            { title: "5. Memories", desc: "Enter your favorite memories together.", icon: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/>' },
+            { title: "6. Custom Memory", desc: "Make a personal category and snap it.", icon: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>' },
+            { title: "7. Best Love 💓😜", desc: "Celebrate with a funny, lovable photo!", icon: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 18.5s3 2.5 7 2.5"/>' }
         ];
 
         window.onload = () => { createFloatingHearts(); setupFingerprintListeners(); setupSyncGameListeners(); };
@@ -517,11 +564,11 @@
             document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${stepId}`).classList.add('active'); state.step = stepId;
             if (stepId === 'tasks') renderTasks();
-            if (stepId === 'celebration') { createConfetti(); stopRecording(); }
+            if (stepId === 'celebration') { stopRecording(); }
             if (stepId === 'summary') setupMemoryCard();
         }
 
-        // --- Visual Effects ---
+        // --- Visual Effects Generators ---
         function createFloatingHearts() {
             const container = document.getElementById('bg-effects');
             for (let i = 0; i < 20; i++) {
@@ -534,18 +581,10 @@
                 container.appendChild(heart);
             }
         }
-        function createConfetti() {
-            const container = document.getElementById('bg-effects'); const colors = ['bg-pink-500', 'bg-purple-500', 'bg-sky-400', 'bg-yellow-400'];
-            for (let i = 0; i < 70; i++) {
-                const p = document.createElement('div'); p.className = `absolute top-0 w-3 h-3 rounded-full ${colors[Math.floor(Math.random() * colors.length)]}`;
-                p.style.left = `${Math.random() * 100}%`; const dur = Math.random() * 3 + 2; const del = Math.random() * 0.5;
-                p.style.animation = `fall ${dur}s ease-in ${del}s forwards`; container.appendChild(p);
-                setTimeout(() => { if (p.parentNode) container.removeChild(p); }, (dur + del) * 1000);
-            }
-        }
 
         // --- 10 Second Mega Celebration ---
         function triggerMegaCelebration() {
+            playClickSFX();
             playClappingCheerSFX();
             const overlay = document.getElementById('mega-celebration');
             const particleContainer = document.getElementById('mega-particles');
@@ -553,23 +592,27 @@
             
             const elements = ['🎈', '🎀', '🎊', '❤️', '🐴', '✨', '💕', '🥰', '💖', '🎉'];
             
-            // Continuous spawning for 9 seconds
+            // Spawn continuously for 9.5 seconds
             let spawnInterval = setInterval(() => {
-                for(let i=0; i<15; i++) {
+                for(let i=0; i<12; i++) {
                     const p = document.createElement('div'); p.innerText = elements[Math.floor(Math.random() * elements.length)];
                     p.style.position = 'absolute'; p.style.left = `${Math.random() * 100}%`; p.style.fontSize = `${Math.random() * 25 + 20}px`;
                     const dur = Math.random() * 3 + 2; p.style.animation = `fall ${dur}s cubic-bezier(.37,0,.63,1) forwards`;
                     particleContainer.appendChild(p);
                     setTimeout(() => p.remove(), dur * 1000);
                 }
-            }, 500);
+            }, 300);
 
             // Minimum 10 seconds display
             setTimeout(() => { 
                 clearInterval(spawnInterval); 
-                overlay.style.display = 'none'; 
-                particleContainer.innerHTML = '';
-                startCountdown(); 
+                overlay.classList.add('opacity-0', 'transition-opacity', 'duration-1000');
+                setTimeout(() => {
+                    overlay.style.display = 'none'; 
+                    overlay.classList.remove('opacity-0');
+                    particleContainer.innerHTML = '';
+                    startCountdown(); 
+                }, 1000);
             }, 10000);
         }
 
@@ -595,11 +638,11 @@
         function checkFpSync() {
             if (state.jeyaramFp && state.ashritaFp && state.step === 'fingerprint') {
                 const sDiv = document.getElementById('scan-status'); document.getElementById('scan-instruction').style.opacity = '0';
-                sDiv.innerHTML += `<div class="absolute w-full flex flex-col items-center text-purple-500 animate-pulse bg-white/50 backdrop-blur rounded-xl p-2 z-10"><svg class="mb-2 fill-purple-400 animate-heartbeat" width="36" height="36" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg><p class="text-sm font-bold">Connecting hearts...</p></div>`;
+                sDiv.innerHTML += `<div class="absolute w-full flex flex-col items-center text-purple-500 animate-pulse bg-white/60 backdrop-blur-md rounded-xl p-2 z-10 shadow-sm"><svg class="mb-2 fill-purple-400 animate-heartbeat" width="36" height="36" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg><p class="text-sm font-bold">Connecting hearts...</p></div>`;
                 setTimeout(() => {
                     if (state.jeyaramFp && state.ashritaFp) { 
                         playSuccessSFX();
-                        sDiv.innerHTML = `<div class="animate-fade-in bg-white/95 p-4 rounded-xl shadow-lg border-2 border-pink-300 w-full z-20 mb-4"><p class="text-[15px] font-bold text-pink-600 mb-2">"Success! Two hearts connected. ❤️"</p><button onclick="playClickSFX(); goToStep('restart-trigger')" class="mt-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:scale-105 transition-transform w-full">Start Your Journey</button></div>`;
+                        sDiv.innerHTML = `<div class="animate-fade-in glass-card p-4 rounded-xl w-full z-20 mb-4"><p class="text-[15px] font-bold text-pink-600 mb-3">"Success! Two hearts connected. ❤️"</p><button onclick="playClickSFX(); goToStep('restart-trigger')" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:scale-105 transition-transform w-full">Begin Your Journey</button></div>`;
                     } else sDiv.innerHTML = '<p class="text-gray-500 text-sm italic absolute w-full transition-opacity" id="scan-instruction">Press and hold simultaneously...</p>';
                 }, 2000);
             }
@@ -612,7 +655,7 @@
             const interval = setInterval(() => {
                 count--;
                 if (count > 0) { playClickSFX(); textEl.innerText = count; textEl.classList.remove('animate-fade-in'); void textEl.offsetWidth; textEl.classList.add('animate-fade-in'); }
-                else if (count === 0) { playSuccessSFX(); textEl.innerHTML = '<svg class="w-48 h-48 fill-pink-500 text-white animate-heartbeat mx-auto" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>'; }
+                else if (count === 0) { playSuccessSFX(); textEl.innerHTML = '<svg class="w-40 h-40 sm:w-48 sm:h-48 fill-pink-500 text-white animate-heartbeat mx-auto" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>'; }
                 else { clearInterval(interval); goToStep('syncgame'); }
             }, 1000);
         }
@@ -634,7 +677,7 @@
                 if(state.syncScore % 10 === 0) spawnLoveParticles(window.innerWidth/2, window.innerHeight/2);
                 if (state.syncScore >= 100) {
                     playSuccessSFX();
-                    document.getElementById('sync-msg').innerText = "Connection fully restored! 💖"; document.getElementById('sync-msg').classList.replace('text-gray-500', 'text-purple-600'); document.getElementById('sync-msg').classList.add('font-bold', 'text-lg');
+                    document.getElementById('sync-msg').innerText = "Connection fully restored! 💖"; document.getElementById('sync-msg').classList.replace('text-gray-500', 'text-purple-600'); document.getElementById('sync-msg').classList.add('font-bold', 'text-lg', 'bg-white/90');
                     setTimeout(() => goToStep('game2'), 1500);
                 }
                 syncJ = false; syncH = false; document.getElementById('sync-j').classList.remove('active'); document.getElementById('sync-h').classList.remove('active');
@@ -663,30 +706,30 @@
                 const isCompleted = state.tasksCompleted[index];
                 const isPreviousCompleted = index === 0 ? true : state.tasksCompleted[index - 1];
                 const isDisabled = !isCompleted && !isPreviousCompleted;
-                const bgClass = isCompleted ? 'bg-white/90 border-green-300 shadow-md' : 'bg-white/70 border-white shadow-sm';
-                const opacityClass = isDisabled ? 'opacity-40 pointer-events-none grayscale' : '';
+                const bgClass = isCompleted ? 'bg-white/90 border-green-300 shadow-md' : 'glass-card border-white shadow-sm';
+                const opacityClass = isDisabled ? 'opacity-50 pointer-events-none grayscale' : '';
                 const iconBg = isCompleted ? 'bg-green-100 text-green-600' : (index%2===0 ? 'bg-sky-100 text-sky-600' : 'bg-pink-100 text-pink-600');
 
                 let btnText = index === 6 ? "Finish Journey & Take Photo" : "Capture Photo & Complete";
-                const camBtn = `<button onclick="playClickSFX(); completeTask(${index})" class="mt-3 text-sm bg-purple-500 hover:bg-purple-600 text-white py-2 px-6 rounded-full transition shadow-md font-bold flex items-center justify-center gap-2 w-full"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> ${btnText}</button>`;
+                const camBtn = `<button onclick="playClickSFX(); completeTask(${index})" class="mt-4 text-sm bg-purple-500 hover:bg-purple-600 text-white py-2.5 px-6 rounded-full transition shadow-md font-bold flex items-center justify-center gap-2 w-full active:scale-95"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> ${btnText}</button>`;
 
                 let actionArea = '';
                 if (isCompleted) {
                     let textContent = '';
-                    if (index === 3) textContent = `<div class="text-sm italic text-gray-800 bg-sky-50 p-3 rounded-lg border-l-4 border-sky-400 mb-2 font-medium">"${state.promiseText}"</div>`;
-                    if (index === 4) textContent = `<ul class="text-xs text-gray-700 mb-2 list-none">${state.memories.map(m => `<li class="bg-pink-50 px-2 py-1 rounded-md mb-1 border border-pink-100">✨ ${m}</li>`).join('')}</ul>`;
-                    if (index === 5) textContent = `<div class="text-sm font-bold text-purple-600 bg-purple-50 p-2 rounded mb-2 text-center border border-purple-200">${state.customTaskTitle}</div>`;
+                    if (index === 3) textContent = `<div class="text-sm italic text-gray-800 bg-sky-50 p-3 rounded-lg border-l-4 border-sky-400 mb-3 font-medium">"${state.promiseText}"</div>`;
+                    if (index === 4) textContent = `<ul class="text-xs text-gray-700 mb-3 list-none">${state.memories.map(m => `<li class="bg-pink-50 px-2 py-1.5 rounded-md mb-1.5 border border-pink-100">✨ ${m}</li>`).join('')}</ul>`;
+                    if (index === 5) textContent = `<div class="text-sm font-bold text-purple-600 bg-purple-50 p-2 rounded mb-3 text-center border border-purple-200">${state.customTaskTitle}</div>`;
                     
                     const imgThumb = state.taskPhotos[index] ? `<img src="${state.taskPhotos[index]}" class="w-16 h-16 object-cover rounded-lg border-2 border-white shadow-sm shrink-0" />` : '';
 
-                    actionArea = `${textContent}<div class="flex items-center justify-between bg-green-50/50 p-2 rounded-lg border border-green-100"><span class="flex items-center gap-1 text-sm font-bold text-green-600">✅ Completed</span>${imgThumb}</div>`;
+                    actionArea = `${textContent}<div class="flex items-center justify-between bg-green-50/50 p-3 rounded-lg border border-green-200"><span class="flex items-center gap-1.5 text-sm font-bold text-green-600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg> Completed</span>${imgThumb}</div>`;
                 } else {
                     if (index === 3) {
-                        actionArea = `<div class="space-y-3 mt-2"><textarea id="promise-input" placeholder="We promise to..." class="w-full text-sm p-3 rounded-xl border border-sky-200 focus:ring-2 focus:ring-sky-400 outline-none resize-none bg-white h-24 shadow-inner"></textarea>${camBtn}</div>`;
+                        actionArea = `<div class="space-y-3 mt-3"><textarea id="promise-input" placeholder="We promise to..." class="w-full text-sm p-3 rounded-xl border border-sky-200 focus:ring-2 focus:ring-sky-400 outline-none resize-none bg-white/80 h-24 shadow-inner"></textarea>${camBtn}</div>`;
                     } else if (index === 4) {
-                        actionArea = `<div class="space-y-3 mt-2 bg-pink-50/50 p-3 rounded-xl border border-pink-100"><div class="flex gap-2"><input type="text" id="memory-input" placeholder="Add a memory/goal..." class="flex-1 text-sm p-2 rounded-lg border border-pink-200 outline-none focus:ring-2 focus:ring-pink-300"><button onclick="playClickSFX(); addMemory()" class="bg-pink-400 text-white px-3 rounded-lg font-bold hover:bg-pink-500 transition">+</button></div><ul id="temp-memory-list" class="text-xs space-y-1 text-gray-600 italic"></ul>${camBtn}</div>`;
+                        actionArea = `<div class="space-y-3 mt-3 bg-pink-50/50 p-3 rounded-xl border border-pink-100"><div class="flex gap-2"><input type="text" id="memory-input" placeholder="Add a memory..." class="flex-1 text-sm p-2.5 rounded-lg border border-pink-200 outline-none focus:ring-2 focus:ring-pink-300 bg-white/90"><button onclick="playClickSFX(); addMemory()" class="bg-pink-400 text-white px-4 rounded-lg font-bold hover:bg-pink-500 transition shadow-sm active:scale-95">+</button></div><ul id="temp-memory-list" class="text-xs space-y-1.5 text-gray-700 italic font-medium"></ul>${camBtn}</div>`;
                     } else if (index === 5) {
-                        actionArea = `<div class="space-y-3 mt-2"><input type="text" id="custom-task-input" placeholder="Enter Category (e.g., Silly Face)" class="w-full text-sm p-3 rounded-xl border border-purple-200 focus:ring-2 focus:ring-purple-400 outline-none bg-white shadow-inner">${camBtn}</div>`;
+                        actionArea = `<div class="space-y-3 mt-3"><input type="text" id="custom-task-input" placeholder="Enter Category (e.g., Silly Face)" class="w-full text-sm p-3 rounded-xl border border-purple-200 focus:ring-2 focus:ring-purple-400 outline-none bg-white/80 shadow-inner">${camBtn}</div>`;
                     } else {
                         actionArea = camBtn;
                     }
@@ -695,7 +738,7 @@
                 let displayTitle = task.title;
                 if (isCompleted && index === 5) displayTitle = `6. ${state.customTaskTitle}`;
 
-                const taskHTML = `<div class="p-5 rounded-2xl border transition-all duration-300 ${bgClass} ${opacityClass}"><div class="flex gap-4 items-start"><div class="p-3 rounded-full ${iconBg} shadow-sm shrink-0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${task.icon}</svg></div><div class="flex-1 w-full min-w-0"><h3 class="font-bold text-gray-800 text-lg leading-tight">${displayTitle}</h3><p class="text-sm text-gray-500 mt-1 mb-2">${task.desc}</p>${actionArea}</div></div></div>`;
+                const taskHTML = `<div class="p-5 sm:p-6 rounded-3xl border transition-all duration-300 ${bgClass} ${opacityClass}"><div class="flex gap-4 items-start"><div class="p-3 sm:p-4 rounded-full ${iconBg} shadow-sm shrink-0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${task.icon}</svg></div><div class="flex-1 w-full min-w-0"><h3 class="font-bold text-gray-800 text-lg leading-tight">${displayTitle}</h3><p class="text-sm text-gray-600 mt-1 mb-2">${task.desc}</p>${actionArea}</div></div></div>`;
                 list.insertAdjacentHTML('beforeend', taskHTML);
             });
             if (!state.tasksCompleted[4] && state.memories.length > 0) updateTempMemoryList();
@@ -739,20 +782,23 @@
                     const polaroid = `
                         <div class="polaroid" style="--rot: ${rot}">
                             <div class="tape" style="--trot: ${trot}"></div>
-                            <img src="${photoData}" class="w-full h-28 object-cover bg-gray-200 border border-gray-100" />
-                            <p class="text-xs text-center mt-3 font-bold text-gray-700 font-handwriting">${titles[idx]}</p>
+                            <img src="${photoData}" class="w-full aspect-square object-cover bg-gray-200 border border-gray-100 rounded-sm shadow-inner" />
+                            <p class="text-xs sm:text-sm text-center mt-3 font-bold text-gray-800 font-handwriting leading-tight">${titles[idx]}</p>
                         </div>
                     `;
                     gallery.insertAdjacentHTML('beforeend', polaroid);
                 }
             });
             
-            // show the compiled video container in the notebook if we actually captured video
             if(recordedChunks.length > 0) {
                 document.getElementById('video-container').classList.remove('hidden');
             }
+            
+            // Celebration confetti on final load
+            setTimeout(createConfetti, 1000);
         }
     </script>
 </body>
 </html>
+
 
