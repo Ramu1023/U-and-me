@@ -26,7 +26,6 @@
         .font-cursive { font-family: 'Playfair Display', serif; }
         .font-handwriting { font-family: 'Caveat', cursive; }
 
-        /* Strict Single Page Application Styles */
         #app-wrapper {
             position: relative;
             width: 100%;
@@ -48,7 +47,6 @@
         }
         .step-container.active { display: block !important; }
 
-        /* Smooth Glassmorphism */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
@@ -57,7 +55,6 @@
             box-shadow: 0 8px 32px 0 rgba(236, 72, 153, 0.15);
         }
 
-        /* Keyboard Hints for Desktop */
         kbd {
             background-color: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(0, 0, 0, 0.15);
@@ -70,7 +67,6 @@
             color: inherit;
         }
 
-        /* Animations */
         @keyframes floatUp {
             0% { transform: translateY(100vh) scale(0.8) rotate(0deg); opacity: 0; }
             20% { opacity: var(--max-opacity, 0.8); }
@@ -121,7 +117,6 @@
         .animate-heartbeat { animation: heartbeat 1.5s infinite; }
         .scanning { animation: pulseGlow 1.5s infinite; }
         
-        /* Game Buttons */
         .btn-sync { transition: all 0.1s ease-out; touch-action: none; }
         .btn-sync.active { animation: syncPulse 0.2s infinite; opacity: 0.8; filter: brightness(1.2); transform: scale(0.95); }
         .heart-btn-active { transform: scale(0.9); filter: brightness(1.2); }
@@ -132,7 +127,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Video PIP */
         #camera-pip {
             position: fixed; bottom: 20px; right: 20px; width: 120px; height: 160px;
             border-radius: 12px; object-fit: cover; border: 3px solid rgba(255, 255, 255, 0.9);
@@ -146,7 +140,6 @@
 
         #bg-effects { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
         
-        /* 10 Second Mega Celebration Overlay */
         #mega-celebration { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             pointer-events: none; z-index: 999; overflow: hidden; display: none;
@@ -160,7 +153,6 @@
         }
         .clock-hand { transform-origin: bottom center; animation: spinBackwards 1.5s linear infinite; }
 
-        /* Memorable Notebook Styles */
         .notebook-paper {
             background-color: #fdf9f3;
             background-image: 
@@ -195,18 +187,23 @@
         }
 
         .progress-bar-fill { transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Memory Overlay Gateway */
+        #memory-gateway {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-sky-200 via-pink-200 to-purple-200 text-slate-800 transition-colors duration-1000">
 
-    <!-- Background Music -->
     <audio id="bgm" loop preload="auto">
         <source src="first_bgm.mp3" type="audio/mpeg">
     </audio>
 
     <div id="bg-effects"></div>
     
-    <!-- Mega Celebration Overlay -->
     <div id="mega-celebration" class="animate-fade-in">
         <svg class="clock-effect" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="48" fill="none" stroke="#ec4899" stroke-width="2" />
@@ -222,14 +219,19 @@
         </div>
     </div>
 
+    <div id="memory-gateway" style="display: none;">
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500 mb-6 font-cursive">Your Journey Awaits</h1>
+        <button onclick="unlockMemory()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-8 rounded-full shadow-[0_0_20px_rgba(236,72,153,0.6)] text-xl transition-transform hover:scale-105 active:scale-95 animate-pulse">
+            Unlock AMMU & ASHU's Memory 💖
+        </button>
+    </div>
+
     <video id="camera-pip" autoplay muted playsinline webkit-playsinline></video>
     <video id="hidden-screen-video" autoplay muted playsinline webkit-playsinline style="display:none;"></video>
     <canvas id="compositor-canvas" style="display:none;"></canvas>
 
-    <!-- Main Application Wrapper for strict layout control -->
     <div id="app-wrapper">
 
-        <!-- STEP -1: Welcome Screen -->
         <div id="step-welcome" class="step-container active animate-fade-in text-center flex flex-col justify-center items-center py-10">
             <h1 class="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-500 mb-4 drop-shadow-sm font-cursive leading-tight">
                 Restart Together
@@ -245,15 +247,14 @@
             <div class="mt-10 glass-card p-5 rounded-2xl max-w-md mx-auto">
                 <p class="text-base font-bold text-pink-600 mb-2 flex items-center justify-center gap-2">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                    Memory Feature Enabled
+                    Permanent Memory Enabled
                 </p>
                 <p class="text-[14px] text-gray-700 font-medium leading-relaxed">
-                    Please allow <strong class="text-purple-600">Camera Permissions</strong> to capture task photos. Turn up your volume for music! Your progress will be saved automatically. ❤️
+                    Please allow <strong class="text-purple-600">Camera & Screen Permissions</strong>. Turn up your volume for music! Your video and photos will be safely locked in this browser's memory. ❤️
                 </p>
             </div>
         </div>
 
-        <!-- STEP 0: Fingerprint Verification -->
         <div id="step-fingerprint" class="step-container">
             <div class="glass-card rounded-[2rem] p-8 sm:p-10 text-center animate-fade-in shadow-xl">
                 <h2 class="text-4xl font-bold text-purple-700 mb-3 font-cursive">Connect Hearts</h2>
@@ -279,7 +280,6 @@
             </div>
         </div>
 
-        <!-- STEP 0.5: Transition Trigger -->
         <div id="step-restart-trigger" class="step-container">
             <div class="flex flex-col items-center justify-center h-[80vh] animate-fade-in text-center">
                 <h2 class="text-3xl font-bold text-purple-700 mb-12 glass-card px-8 py-3 rounded-full shadow-md font-cursive">Ready for the magic? ✨</h2>
@@ -289,14 +289,12 @@
             </div>
         </div>
 
-        <!-- STEP 1: Countdown -->
         <div id="step-countdown" class="step-container">
             <div class="flex flex-col items-center justify-center h-[80vh]">
                 <div id="countdown-text" class="text-[180px] sm:text-[220px] font-black text-white" style="text-shadow: 0 0 60px rgba(255,105,180,1)">3</div>
             </div>
         </div>
 
-        <!-- STEP 2: Sync Game -->
         <div id="step-syncgame" class="step-container">
             <div class="glass-card rounded-[2rem] p-8 sm:p-10 text-center animate-fade-in shadow-xl">
                 <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-3 font-cursive">Sync Challenge</h2>
@@ -319,7 +317,6 @@
             </div>
         </div>
 
-        <!-- STEP 2.5: Love Meter Game -->
         <div id="step-game2" class="step-container">
             <div class="glass-card rounded-[2rem] p-8 sm:p-10 text-center animate-fade-in shadow-xl">
                 <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500 mb-3 font-cursive">Love Meter</h2>
@@ -336,7 +333,6 @@
             </div>
         </div>
 
-        <!-- STEP 2.7: Catch Hearts Game -->
         <div id="step-game3" class="step-container w-full max-w-full h-full">
             <div class="glass-card rounded-[2rem] p-6 text-center animate-fade-in shadow-xl w-full max-w-2xl mx-auto h-[70vh] flex flex-col relative overflow-hidden">
                 <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500 mb-2 font-cursive">Catch the Hearts!</h2>
@@ -345,14 +341,11 @@
                     Caught: <span id="catch-score">0</span> / 20
                 </div>
                 
-                <!-- Falling Hearts Area -->
                 <div id="heart-catch-area" class="flex-1 w-full relative border-t-2 border-dashed border-pink-200 mt-2 bg-gradient-to-b from-transparent to-pink-50 rounded-b-xl overflow-hidden touch-none">
-                    <!-- Hearts spawn here via JS -->
                 </div>
             </div>
         </div>
 
-        <!-- STEP 3: Tasks -->
         <div id="step-tasks" class="step-container max-w-2xl">
             <div class="w-full animate-fade-in pb-10">
                 <h2 class="text-5xl font-bold text-center mb-8 text-purple-800 flex items-center justify-center gap-3 drop-shadow-sm font-cursive">
@@ -362,7 +355,6 @@
             </div>
         </div>
 
-        <!-- STEP 4: Final Celebration -->
         <div id="step-celebration" class="step-container max-w-xl">
             <div class="glass-card border-2 border-pink-300 shadow-2xl rounded-[2rem] p-10 text-center relative overflow-hidden animate-fade-in">
                 <div class="text-6xl mb-6" style="animation: bounce 2s infinite">🎇❤️🎆</div>
@@ -380,7 +372,6 @@
             </div>
         </div>
 
-        <!-- STEP 5: Memorable Notebook & Certificate -->
         <div id="step-summary" class="step-container w-full max-w-2xl mx-auto">
             <div class="w-full animate-fade-in pb-10 pt-4">
                 
@@ -391,7 +382,6 @@
                     </button>
                 </div>
 
-                <!-- Memorable Notebook Design -->
                 <div class="notebook-paper mb-10">
                     <div class="notebook-binder-holes">
                         <div class="hole"></div><div class="hole"></div><div class="hole"></div>
@@ -411,7 +401,6 @@
                             </div>
                             <video id="final-video" class="w-full h-auto object-cover max-h-[500px]" controls playsinline webkit-playsinline preload="auto"></video>
                         </div>
-                        <p id="video-warning" class="text-xs text-gray-400 italic text-center mb-4">(Video is session-only, but photos & notes below are saved forever!)</p>
 
                         <h3 class="text-3xl font-handwriting text-red-500 font-bold mt-10 -ml-2">Our Captured Moments</h3>
                         <div id="photo-gallery" class="grid grid-cols-2 sm:grid-cols-3 gap-6 my-8 pl-1 sm:pl-2"></div>
@@ -424,7 +413,6 @@
                     </div>
                 </div>
 
-                <!-- Formal Certificate Section -->
                 <div class="bg-gradient-to-b from-yellow-50 to-white rounded-3xl p-8 sm:p-12 shadow-2xl border border-yellow-300 relative overflow-hidden text-center">
                     <div class="absolute inset-3 sm:inset-4 border-4 border-double border-yellow-300 rounded-2xl pointer-events-none opacity-50"></div>
                     <svg class="w-20 h-20 mx-auto text-yellow-500 mb-6 fill-yellow-100" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
@@ -454,66 +442,98 @@
             </div>
         </div>
 
-    </div> <!-- End Main Wrapper -->
+    </div> 
 
     <script>
+        // --- IndexedDB for Large Video Storage ---
+        const dbName = "RestartJourneyDB";
+        let db;
+
+        const initDB = () => {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, 1);
+                request.onerror = () => reject("DB Error");
+                request.onsuccess = (event) => { db = event.target.result; resolve(); };
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    db.createObjectStore("memories", { keyPath: "id" });
+                };
+            });
+        };
+
+        const saveMemoryToDB = async () => {
+            if(!db) await initDB();
+            const tx = db.transaction("memories", "readwrite");
+            const store = tx.objectStore("memories");
+            store.put({
+                id: "ammu_ashu",
+                date: state.date,
+                promText: state.promText,
+                memories: state.memories,
+                photos: state.taskPhotos,
+                customTask: state.customTaskTitle,
+                videoBlob: state.videoBlob // Large binary data perfectly fine here!
+            });
+        };
+
+        const loadMemoryFromDB = async () => {
+            if(!db) await initDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("memories", "readonly");
+                const store = tx.objectStore("memories");
+                const req = store.get("ammu_ashu");
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject();
+            });
+        };
+
         // --- State Management ---
         let state = {
             step: 'welcome', 
             jeyaramFp: false, ashritaFp: false, 
             syncScore: 0, loveScore: 0, catchScore: 0,
-            tasksCompleted: [false, false, false, false, false, false, false, false], // 8 tasks now
+            tasksCompleted: [false, false, false, false, false, false, false, false], 
             taskPhotos: [null, null, null, null, null, null, null, null],
             promText: "", memories: [], customTaskTitle: "",
-            date: null
+            date: null, videoBlob: null
         };
 
-        // --- Init & LocalStorage Router ---
-        window.onload = () => { 
-            // Routing check
+        // --- Init & Router ---
+        window.onload = async () => { 
             if(window.location.hash === '#memory') {
-                const saved = localStorage.getItem('restartJourneyData');
-                if(saved) {
-                    try {
-                        const parsed = JSON.parse(saved);
-                        state.promText = parsed.promText || "";
-                        state.memories = parsed.memories || [];
-                        state.taskPhotos = parsed.photos || [];
-                        state.customTaskTitle = parsed.customTask || "";
-                        state.date = parsed.date;
-                        // Skip games, go to summary
-                        document.getElementById('video-warning').style.display = 'none'; // no video restored
-                        setupMemoryCard(true);
-                        goToStep('summary');
+                try {
+                    const saved = await loadMemoryFromDB();
+                    if(saved) {
+                        state.promText = saved.promText || "";
+                        state.memories = saved.memories || [];
+                        state.taskPhotos = saved.photos || [];
+                        state.customTaskTitle = saved.customTask || "";
+                        state.date = saved.date;
+                        state.videoBlob = saved.videoBlob || null;
+                        
+                        document.getElementById('step-welcome').classList.remove('active');
+                        document.getElementById('memory-gateway').style.display = 'flex';
                         return;
-                    } catch(e) { console.error("Could not load memory", e); }
-                }
+                    }
+                } catch(e) { console.error("Could not load memory", e); }
             }
 
-            // Normal Initialization
             createFloatingHearts(); 
             setupFingerprintListeners(); 
             setupSyncGameListeners(); 
         };
 
-        function saveMemoryToLocal() {
-            try {
-                // Downscale logic is applied during capture to prevent QuotaExceededError
-                const memoryState = {
-                    date: Date.now(),
-                    promText: state.promText,
-                    memories: state.memories,
-                    photos: state.taskPhotos,
-                    customTask: state.customTaskTitle
-                };
-                localStorage.setItem('restartJourneyData', JSON.stringify(memoryState));
-            } catch(e) { console.warn("Local storage full or restricted.", e); }
+        function unlockMemory() {
+            initAudio();
+            document.getElementById('memory-gateway').style.display = 'none';
+            setupMemoryCard(true);
+            goToStep('summary');
         }
 
         function copyMemoryLink() {
             const url = window.location.href.split('#')[0] + '#memory';
             navigator.clipboard.writeText(url).then(() => {
-                alert("Memory link copied! You can use this link to revisit your notebook anytime.");
+                alert("Memory link copied!\n\nNote: Because your video and photos are saved securely on your device, this link will only load your memories on this exact browser and device.");
             });
         }
 
@@ -676,8 +696,9 @@
                 
                 mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
                 mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'video/mp4' });
-                    document.getElementById('final-video').src = URL.createObjectURL(blob);
+                    state.videoBlob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'video/mp4' });
+                    document.getElementById('final-video').src = URL.createObjectURL(state.videoBlob);
+                    saveMemoryToDB(); // Update DB with the finished video blob
                 };
 
                 mediaRecorder.start(); 
@@ -700,7 +721,6 @@
             const video = document.getElementById('camera-pip');
             if (camStream && video.readyState >= 2) {
                 const canvas = document.createElement('canvas'); 
-                // Severely downscale to fit in localStorage limit (max 5mb)
                 const targetSize = 250; 
                 canvas.width = targetSize; canvas.height = targetSize;
                 const ctx = canvas.getContext('2d'); 
@@ -712,9 +732,8 @@
                 
                 ctx.drawImage(video, sx, sy, minEdge, minEdge, 0, 0, targetSize, targetSize);
                 
-                // Compress highly
-                state.taskPhotos[index] = canvas.toDataURL('image/jpeg', 0.6);
-                saveMemoryToLocal(); // Auto-save
+                state.taskPhotos[index] = canvas.toDataURL('image/jpeg', 0.8);
+                saveMemoryToDB();
             }
         }
 
@@ -977,7 +996,7 @@
             if (state.tasksCompleted.every(t => t === true)) {
                 playSuccessSFX();
                 state.date = Date.now();
-                saveMemoryToLocal(); // Final save
+                saveMemoryToDB(); 
                 setTimeout(() => goToStep('celebration'), 1000);
             }
         };
@@ -1009,10 +1028,10 @@
                 }
             });
             
-            if(!isRestored && recordedChunks.length > 0) {
+            if(state.videoBlob) {
                 document.getElementById('video-header').classList.remove('hidden');
                 document.getElementById('video-container').classList.remove('hidden');
-                document.getElementById('video-warning').style.display = 'block';
+                document.getElementById('final-video').src = URL.createObjectURL(state.videoBlob);
             }
         }
     </script>
